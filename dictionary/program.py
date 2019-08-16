@@ -1,21 +1,26 @@
 import json
-import difflib
+from difflib import get_close_matches
 
 data = json.load(open("data.json"))
 
 
-def translate():
-    x = input("What would you like to look up? ")
-    x = x.lower()
-    x = difflib.get_close_matches(x, data.keys(), n=1)
-    if x in data:
-        return data[x]
+def translate(word):
+    word = word.lower()
+    close_match = get_close_matches(word, data.keys())
+    if word in data:
+        return data[word]
+    elif len(close_match) > 0:
+        print("Did you mean %s instead?" % close_match[0])
+        user_confirmation = input("Y or N\n")
+        if user_confirmation == 'Y':
+            return data[close_match[0]]
+        else:
+            return "Please try again."
+
     else:
         print("Word not found. Please enter again.")
         translate()
 
 
-print(translate())
-
-# x = difflib.get_close_matches("there is ej gnsdf", data)
-# print(x[0])
+x = input("What would you like to look up? ")
+print(translate(x))
